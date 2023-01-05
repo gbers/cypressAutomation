@@ -73,17 +73,28 @@
   })
 
   // Error login
-    Cypress.Commands.add('emailErrorNotification', (type) => { 
-        // Assert error notifications
+  Cypress.Commands.add('emailErrorNotification',  (type) => { 
+    // Assert error notifications
+    if (type === 'email') {
+      cy.get('#auth-error-message-box').should('be.visible');
+      cy.get('.a-alert-heading').contains('There was a problem');
+      cy.get('.a-list-item').contains('We cannot find an account with that email address');
+    } else if (type === 'password') {
+     // Assert error or warning notifications
+     if (cy.get('#auth-error-message-box').should('not.exist'))
+        cy.get('#auth-warning-message-box').should('be.visible');
+        cy.get('.a-alert-heading').contains('Important Message!');
+        cy.get('.a-list-item').contains('To better protect your account, please re-enter your password and then enter the characters as they are shown in the image below.');
+        
+    } else {
         cy.get('#auth-error-message-box').should('be.visible');
         cy.get('.a-alert-heading').contains('There was a problem');
-        if(type == 'email'){
-            cy.get('.a-list-item').contains('We cannot find an account with that email address');
-        }
-        if(type == 'password'){
-            cy.get('.a-list-item').contains('Your password is incorrect');
-        }
-     })
+        cy.get('.a-list-item').contains('Your password is incorrect');
+    }
+  });
+      
+
+  
 
     // -- Search Item --
     Cypress.Commands.add('searchItem', (value) => { 
@@ -111,27 +122,27 @@
 
     
      Cypress.Commands.add('setQuantity', (qty) => { 
+        let quantity = `#quantity_` + (qty-1)
         // Select the "Quantity" field
-        cy.get('#quantity').select(qty);
+        cy.get('#a-autoid-0-announce').click();
          // Update the quantity to 
-        // cy.get('#quantity').type(qty);
-          // Click the "Update Cart" button
-         cy.get('#update-cart-button').click();
-        // Assert that the quantity in the cart is 
-        cy.get('#cart-item-quantity').should('have.text', qty);
+         cy.get(quantity).click();
+
      })
 
     // -- Update quantity--
-
+    Cypress.Commands.add('verifyLogin',() =>{
+        cy.get('#nav-link-accountList-nav-line-1').contains('Hello, Tvlk')
+    })
 
     // Select by item name
     Cypress.Commands.add('selectSuggestionItemByName', (itemName) => { 
-    cy.get('#nav-flyout-searchAjax').each(function($el,index,$list) {
-        if($el.text().includes(itemName)){
-            cy.wrap($el).click();
-        }
-        else{
-            cy.log($el.text);
-        }
+        cy.get('#nav-flyout-searchAjax').each(function($el,index,$list) {
+            if($el.text().includes(itemName)){
+                cy.wrap($el).click();
+            }
+            else{
+                cy.log($el.text);
+            }
+         })
     })
-})

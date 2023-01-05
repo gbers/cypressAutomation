@@ -9,7 +9,11 @@ describe('User should able to search items and add to cart', () => {
     cy.selectSuggestionItemByName('sofabeds and sleepers queen');
     // Select items by index
     cy.selectItemByIndex(3);
+    // Update quantity
+    cy.setQuantity(2)
     // Add to cart
     cy.addToCart();
-  })
+  }) 
+
+
 })
